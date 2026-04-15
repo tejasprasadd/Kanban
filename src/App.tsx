@@ -1,10 +1,11 @@
-import "./index.css";
+import "./compiled.css";
 import { SeedGate } from "@/components/SeedGate";
+import { KanbanBoard } from "./components/KanbanBoard";
 
 export function App() {
   return (
     <SeedGate>
-      <h1 className="text-2xl font-bold text-center">Kanban</h1>
+      <KanbanBoard />
     </SeedGate>
   );
 }
