@@ -23,7 +23,7 @@ export async function getTodobyId(id: number): Promise<DummyJsonTodoDto> {
 }
 
 export async function addTodo(todo: DummyJsonTodoAddRequestDto): Promise<DummyJsonTodoDto> {
-    const response = await dummyJsonApi.post<DummyJsonTodoDto>("/todos", todo);
+    const response = await dummyJsonApi.post<DummyJsonTodoDto>("/todos/add", todo);
     return response.data;
 }
 
