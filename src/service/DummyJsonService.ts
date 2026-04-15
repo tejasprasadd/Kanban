@@ -5,7 +5,7 @@ import type {
     DummyJsonTodoAddRequestDto,
     DummyJsonTodoUpdateRequestDto,
     DummyJsonTodoDeleteResponseDto,
-  } from "../types/dummyJson/TodoDtos";
+  } from "../types/dummyjson/TodoDtos";
 
 export async function getTodos(params?:{
     limit?: number;
