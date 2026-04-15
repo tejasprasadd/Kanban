@@ -2,9 +2,9 @@ import type { PropsWithChildren } from "react";
 import { useDummyJsonSeedOnLoad } from "../domain/useDummyJsonSeedOnLoad";
 
 // shadcn UI (you may need to generate these components)
-import { Button } from "../shadcn-components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "../shadcn-components/ui/card";
-import { Alert, AlertDescription, AlertTitle } from "../shadcn-components/ui/alert";
+import { Button } from "./shadcn-components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "./shadcn-components/ui/card";
+import { Alert, AlertDescription, AlertTitle } from "./shadcn-components/ui/alert";
 
 export function SeedGate({ children }: PropsWithChildren) {
   const { isLoading, isError, errorMessage, retry, hasHydrated } =
