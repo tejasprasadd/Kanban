@@ -35,6 +35,8 @@ type KanbanState = {
 
   moveTask: (id: string, toStatus: TaskStatus, toIndex: number) => void;
   reorderTask: (status: TaskStatus, fromIndex: number, toIndex: number) => void;
+
+  setHasHydrated: (value: boolean) => void;
 };
 
 //Helper functions to create empty order 
@@ -57,6 +59,7 @@ function clampIndex(index: number, len: number): number {
 export const useKanbanStore = create<KanbanState>()(
   persist(
     (set, get) => ({
+      setHasHydrated: (value: boolean) => set({ hasHydrated: value }),
       hasHydrated: false,
 
       tasksById: {},
@@ -200,7 +203,7 @@ export const useKanbanStore = create<KanbanState>()(
           // safest fallback: wipe to defaults
           state?.seedFromApi([]); // no-op, but keeps type happy if you later change structure
         }
-        state && (state.hasHydrated = true);
+        state?.setHasHydrated(true);
       },
       partialize: (state) => ({
         tasksById: state.tasksById,
