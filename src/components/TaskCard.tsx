@@ -16,12 +16,14 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "./shadcn-components/ui/alert-dialog";
+import type { SyntheticListenerMap } from "@dnd-kit/core/dist/hooks/utilities";
 
 type Props = {
   task: Task;
+  dragListeners?: SyntheticListenerMap
 };
 
-export function TaskCard({ task }: Props) {
+export function TaskCard({ task, dragListeners }: Props) {
   const deleteTask = useKanbanStore((s) => s.deleteTask);
   const updateTask = useKanbanStore((s) => s.updateTask);
 
@@ -102,6 +104,7 @@ export function TaskCard({ task }: Props) {
             >
             <Pencil className="h-4 w-4" />
             </Button>
+            
 
             <Button
               variant="ghost"
@@ -131,6 +134,13 @@ export function TaskCard({ task }: Props) {
                 </AlertDialogContent>
               </AlertDialog>
             </Button>
+            <div
+                {...dragListeners}
+                className="cursor-grab active:cursor-grabbing rounded-md p-2 hover:bg-muted touch-none"
+                aria-label="Drag task"
+                >
+                ⋮⋮
+            </div>
           </div>
         </div>
       </CardContent>

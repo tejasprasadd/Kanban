@@ -34,9 +34,7 @@ export function SortableTaskCard({ task }: Props) {
     <div
     ref={setNodeRef}
     style={style}
-    className="touch-none"
     {...attributes}
-    {...listeners}
   >
     <TaskCard task={task} />
   </div>
