@@ -59,7 +59,7 @@ export function CreateTaskDialog() {
               id="task-title"
               value={title}
               onChange={(e) => setTitle(e.target.value)}
-              placeholder="e.g. Write PRD for Phase 6"
+              placeholder="e.g. Watch Dhurandhar 2"
               autoFocus
             />
           </div>
