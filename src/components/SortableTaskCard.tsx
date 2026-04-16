@@ -12,10 +12,10 @@ export function SortableTaskCard({ task }: Props) {
   const {
     attributes,
     listeners,
-    setNodeRef,
-    setActivatorNodeRef,
-    transform,
-    transition,
+    setNodeRef, //React ref callback we attach to the main DOM mode
+    setActivatorNodeRef,// IT is the exact element that is dragged.
+    transform,// position offset of the card
+    transition,// animation style of the task 
     isDragging,
   } = useSortable({
     id: task.id,

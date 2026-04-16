@@ -44,7 +44,7 @@ export function KanbanBoard() {
     }),
   
     // PointerSensor is optional if you already use Mouse+Touch,
-    // but you can keep it if you want:
+    // written here just to be safe in case of descktop:
     useSensor(PointerSensor, {
       activationConstraint: { distance: 8 },
     }),

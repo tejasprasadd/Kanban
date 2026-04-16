@@ -13,12 +13,15 @@ function getErrorMessage(err: unknown): string {
   return "Failed to load seed tasks.";
 }
 
-export function useDummyJsonSeedOnLoad(limit = 20) {
+
+//Hydration her is the rehydration of the persisted Zustand state from localStorage to memory. 
+//This is a hook that DECIDES wheter we should seed the tasks from the API or not. . 
+export function useDummyJsonSeedOnLoad(limit = 30) {
   const hasHydrated = useKanbanStore((s) => s.hasHydrated);
   const seedApplied = useKanbanStore((s) => s.seed.applied);
   const tasksCount = useKanbanStore((s) => Object.keys(s.tasksById).length);
   const seedFromApi = useKanbanStore((s) => s.seedFromApi);
-
+    //useMemo used to ensure value is stable and only recalculates when the 3 inputs is change. 
   const shouldSeed = useMemo(() => {
     return hasHydrated && !seedApplied && tasksCount === 0;
   }, [hasHydrated, seedApplied, tasksCount]);

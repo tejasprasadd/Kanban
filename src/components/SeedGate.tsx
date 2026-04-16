@@ -10,7 +10,7 @@ export function SeedGate({ children }: PropsWithChildren) {
   const { isLoading, isError, errorMessage, retry, hasHydrated } =
     useDummyJsonSeedOnLoad(20);
 
-  // Optional: show nothing until hydration, or show a tiny loading state.
+  // show nothing until hydration is complete, or show a tiny loading state.
   if (!hasHydrated) {
     return (
       <div className="mx-auto max-w-xl p-6">

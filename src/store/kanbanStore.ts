@@ -11,6 +11,8 @@ type ColumnOrder = Record<TaskStatus, string[]>;
 //On refresh we might get tasks again so to avoid that we are stoirng ids that i have deleted in my application. 
 type DeletedTaskIds = Record<string, true>;
 
+
+//Boolean flag to check if we have seeded already 
 type SeedMeta = {
   applied: boolean;
   provider: "dummyjson";
@@ -18,7 +20,7 @@ type SeedMeta = {
   version: number;
 };
 
-//THese are the interfaces for everything that is kept in the store. 
+//THese is the intrface of the entire store.  
 type KanbanState = {
   hasHydrated: boolean;
 
@@ -56,10 +58,14 @@ function clampIndex(index: number, len: number): number {
   return index;
 }
 
+//Where we create and build the zustand store. 
 export const useKanbanStore = create<KanbanState>()(
   persist(
+    //set: update, get: fetch
     (set, get) => ({
+      //Defines the hydrated check
       setHasHydrated: (value: boolean) => set({ hasHydrated: value }),
+      //Initial value of hasHydrated as for first time it will be false
       hasHydrated: false,
 
       tasksById: {},
@@ -67,25 +73,34 @@ export const useKanbanStore = create<KanbanState>()(
       deletedTaskIds: {},
       seed: { applied: false, provider: "dummyjson", appliedAt: "", version: 1 },
 
+      //Fetches the starter tasks from the DummyJson API and seeds the store. 
       seedFromApi: (tasks) => {
+        //Reads the current state of the store.
         const { seed, tasksById, deletedTaskIds, columnOrder } = get();
+        //If seeding is done, avoid duplication.
         if (seed.applied) return;
 
+        //Make a shallow copy of the task dictionary and the column order. 
         const nextTasksById: TasksById = { ...tasksById };
+        //Creates the copies of arrays for each column. (AS to avoid mutating the original state)
         const nextColumnOrder: ColumnOrder = {
           todo: [...columnOrder.todo],
           "in-progress": [...columnOrder["in-progress"]],
           done: [...columnOrder.done],
         };
 
+        //Looping over all API tasks
         for (const task of tasks) {
+          //If task is deleted or already exists, skip.
           if (deletedTaskIds[task.id]) continue;
           if (nextTasksById[task.id]) continue;
 
+          //Add the task to the dictionary and the column order. 
           nextTasksById[task.id] = task;
           nextColumnOrder[task.status] = [...nextColumnOrder[task.status], task.id];
         }
 
+        //Commiting the new seeded state into the store. 
         set({
           tasksById: nextTasksById,
           columnOrder: nextColumnOrder,
@@ -97,16 +112,17 @@ export const useKanbanStore = create<KanbanState>()(
           },
         });
       },
-
+      //Creates a new task in the store. 
       createTask: (task) => {
         const { tasksById, columnOrder } = get();
         if (tasksById[task.id]) return;
 
+        //Adding the new task to the dictionary and the column order. 
         set({
           tasksById: { ...tasksById, [task.id]: task },
           columnOrder: {
             ...columnOrder,
-            [task.status]: [task.id, ...columnOrder[task.status]], // put on top; change if you prefer bottom
+            [task.status]: [task.id, ...columnOrder[task.status]],
           },
         });
       },
@@ -122,6 +138,7 @@ export const useKanbanStore = create<KanbanState>()(
 
         let nextColumnOrder = columnOrder;
 
+        //thIS IS IF THE STATUS OF THE TASK IS CHANGED 
         if (prevStatus !== nextStatus) {
           nextColumnOrder = {
             todo: removeId(columnOrder.todo, id),
@@ -131,24 +148,30 @@ export const useKanbanStore = create<KanbanState>()(
           nextColumnOrder[nextStatus] = [id, ...nextColumnOrder[nextStatus]];
         }
 
+        //Updating the task in the dictionary and the column order. 
         set({
           tasksById: { ...tasksById, [id]: next },
           columnOrder: nextColumnOrder,
         });
       },
 
+      //Deletes a task from the store. 
       deleteTask: (id) => {
+        //Reading the current state of the store.
         const { tasksById, columnOrder, deletedTaskIds } = get();
         const existing = tasksById[id];
         if (!existing) return;
 
+        //Removing the key id from the tasksById dictionary. 
         const { [id]: _, ...rest } = tasksById;
 
+          //If the task was an API-seeded task, add its ID to deletedTaskIds. If it was a local task, keep the deleted list unchanged.
         const nextDeleted: DeletedTaskIds =
           existing.source === "api"
             ? { ...deletedTaskIds, [id]: (true as const) }
             : deletedTaskIds;
 
+        //Updating the state of the store. after the deletion work. 
         set({
           tasksById: rest,
           deletedTaskIds: nextDeleted,
@@ -160,6 +183,7 @@ export const useKanbanStore = create<KanbanState>()(
         });
       },
 
+      //Editing of the status after the drag and drop ops. 
       moveTask: (id, toStatus, toIndex) => {
         const { tasksById, columnOrder } = get();
         const existing = tasksById[id];
@@ -182,6 +206,7 @@ export const useKanbanStore = create<KanbanState>()(
         });
       },
 
+      //Reordering a task within a column after the drag and drop ops. 
       reorderTask: (status, fromIndex, toIndex) => {
         const { columnOrder } = get();
         const list = columnOrder[status];
@@ -197,9 +222,11 @@ export const useKanbanStore = create<KanbanState>()(
         set({ columnOrder: { ...columnOrder, [status]: next } });
       },
     }),
+
     {
+      //Name of the store and the version. 
       name: "kanban:v1",
-      version: 2,
+      version: 2,//PReviously i had only todo and complete columns and that is why it is version 2. 
       storage: createJSONStorage(() => localStorage),
       migrate: (persisted: unknown, version: number) => {
         const state = persisted as Record<string, unknown>;
@@ -211,6 +238,7 @@ export const useKanbanStore = create<KanbanState>()(
         }
         return state as KanbanState;
       },
+
       onRehydrateStorage: () => (state, error) => {
         if (error) {
           // safest fallback: wipe to defaults
