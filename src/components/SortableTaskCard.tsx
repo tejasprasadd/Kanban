@@ -13,6 +13,7 @@ export function SortableTaskCard({ task }: Props) {
     attributes,
     listeners,
     setNodeRef,
+    setActivatorNodeRef,
     transform,
     transition,
     isDragging,
@@ -34,9 +35,13 @@ export function SortableTaskCard({ task }: Props) {
     <div
     ref={setNodeRef}
     style={style}
-    {...attributes}
   >
-    <TaskCard task={task} />
+    <TaskCard
+      task={task}
+      dragAttributes={attributes}
+      dragListeners={listeners}
+      setDragHandleRef={setActivatorNodeRef}
+    />
   </div>
   );
 }

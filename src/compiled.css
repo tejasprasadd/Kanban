@@ -360,6 +360,12 @@
   .transform {
     transform: var(--tw-rotate-x,) var(--tw-rotate-y,) var(--tw-rotate-z,) var(--tw-skew-x,) var(--tw-skew-y,);
   }
+  .cursor-grab {
+    cursor: grab;
+  }
+  .touch-none {
+    touch-action: none;
+  }
   .auto-rows-min {
     grid-auto-rows: min-content;
   }
@@ -553,6 +559,9 @@
   }
   .bg-clip-padding {
     background-clip: padding-box;
+  }
+  .p-2 {
+    padding: calc(var(--spacing) * 2);
   }
   .p-3 {
     padding: calc(var(--spacing) * 3);
@@ -882,6 +891,11 @@
       @supports (color: color-mix(in lab, red, red)) {
         --tw-ring-color: color-mix(in oklab, var(--ring) 50%, transparent);
       }
+    }
+  }
+  .active\:cursor-grabbing {
+    &:active {
+      cursor: grabbing;
     }
   }
   .active\:not-aria-\[haspopup\]\:translate-y-px {

@@ -16,14 +16,17 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "./shadcn-components/ui/alert-dialog";
+import type { DraggableAttributes } from "@dnd-kit/core";
 import type { SyntheticListenerMap } from "@dnd-kit/core/dist/hooks/utilities";
 
 type Props = {
   task: Task;
-  dragListeners?: SyntheticListenerMap
+  dragListeners?: SyntheticListenerMap;
+  dragAttributes?: DraggableAttributes;
+  setDragHandleRef?: (element: HTMLElement | null) => void;
 };
 
-export function TaskCard({ task, dragListeners }: Props) {
+export function TaskCard({ task, dragListeners, dragAttributes, setDragHandleRef }: Props) {
   const deleteTask = useKanbanStore((s) => s.deleteTask);
   const updateTask = useKanbanStore((s) => s.updateTask);
 
@@ -104,7 +107,16 @@ export function TaskCard({ task, dragListeners }: Props) {
             >
             <Pencil className="h-4 w-4" />
             </Button>
-            
+
+            <div
+              ref={setDragHandleRef}
+              {...dragAttributes}
+              {...dragListeners}
+              className="cursor-grab active:cursor-grabbing rounded-md p-2 hover:bg-muted touch-none"
+              aria-label="Drag task"
+            >
+              ⋮⋮
+            </div>
 
             <Button
               variant="ghost"
@@ -134,13 +146,6 @@ export function TaskCard({ task, dragListeners }: Props) {
                 </AlertDialogContent>
               </AlertDialog>
             </Button>
-            <div
-                {...dragListeners}
-                className="cursor-grab active:cursor-grabbing rounded-md p-2 hover:bg-muted touch-none"
-                aria-label="Drag task"
-                >
-                ⋮⋮
-            </div>
           </div>
         </div>
       </CardContent>
