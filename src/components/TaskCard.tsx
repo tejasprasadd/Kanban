@@ -112,10 +112,13 @@ export function TaskCard({ task, dragListeners, dragAttributes, setDragHandleRef
               ref={setDragHandleRef}
               {...dragAttributes}
               {...dragListeners}
-              className="cursor-grab active:cursor-grabbing rounded-md p-2 hover:bg-muted touch-none"
+              role="button"
+              tabIndex={0}
+              className="select-none touch-none cursor-grab active:cursor-grabbing rounded-md p-2.5 min-h-10 min-w-10 inline-flex items-center justify-center hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/50"
               aria-label="Drag task"
+              title="Drag"
             >
-              ⋮⋮
+              <span className="text-sm leading-none opacity-80">⋮⋮</span>
             </div>
 
             <Button
