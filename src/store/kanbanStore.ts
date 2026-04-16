@@ -41,7 +41,7 @@ type KanbanState = {
 
 //Helper functions to create empty order 
 function emptyColumnOrder(): ColumnOrder {
-  return { todo: [], done: [] };
+  return { todo: [], "in-progress": [], done: [] };
 }
 
 //Helper to remove id from list( deleting, moving , changin status)
@@ -74,6 +74,7 @@ export const useKanbanStore = create<KanbanState>()(
         const nextTasksById: TasksById = { ...tasksById };
         const nextColumnOrder: ColumnOrder = {
           todo: [...columnOrder.todo],
+          "in-progress": [...columnOrder["in-progress"]],
           done: [...columnOrder.done],
         };
 
@@ -124,6 +125,7 @@ export const useKanbanStore = create<KanbanState>()(
         if (prevStatus !== nextStatus) {
           nextColumnOrder = {
             todo: removeId(columnOrder.todo, id),
+            "in-progress": removeId(columnOrder["in-progress"], id),
             done: removeId(columnOrder.done, id),
           };
           nextColumnOrder[nextStatus] = [id, ...nextColumnOrder[nextStatus]];
@@ -152,6 +154,7 @@ export const useKanbanStore = create<KanbanState>()(
           deletedTaskIds: nextDeleted,
           columnOrder: {
             todo: removeId(columnOrder.todo, id),
+            "in-progress": removeId(columnOrder["in-progress"], id),
             done: removeId(columnOrder.done, id),
           },
         });
@@ -196,8 +199,18 @@ export const useKanbanStore = create<KanbanState>()(
     }),
     {
       name: "kanban:v1",
-      version: 1,
+      version: 2,
       storage: createJSONStorage(() => localStorage),
+      migrate: (persisted: unknown, version: number) => {
+        const state = persisted as Record<string, unknown>;
+        if (version < 2) {
+          const col = state.columnOrder as Record<string, string[]> | undefined;
+          if (col && !col["in-progress"]) {
+            col["in-progress"] = [];
+          }
+        }
+        return state as KanbanState;
+      },
       onRehydrateStorage: () => (state, error) => {
         if (error) {
           // safest fallback: wipe to defaults

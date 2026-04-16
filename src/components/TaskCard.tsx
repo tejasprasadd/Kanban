@@ -64,7 +64,9 @@ export function TaskCard({ task, dragListeners, dragAttributes, setDragHandleRef
     className={
         task.status === "done"
           ? "bg-green-50 ring-green-200/60"
-          : "bg-red-50 ring-red-200/60"
+          : task.status === "in-progress"
+            ? "bg-yellow-50 ring-yellow-200/60"
+            : "bg-red-50 ring-red-200/60"
       }>
       <CardContent className="p-3">
         <div className="flex items-start justify-between gap-3">

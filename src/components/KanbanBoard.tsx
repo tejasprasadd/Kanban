@@ -53,6 +53,7 @@ export function KanbanBoard() {
   //Finding which columnt the task belongs to. 
   function findStatusOfTask(order: typeof columnOrder, taskId: string): TaskStatus | null {
     if (order.todo.includes(taskId)) return "todo";
+    if (order["in-progress"].includes(taskId)) return "in-progress";
     if (order.done.includes(taskId)) return "done";
     return null;
   }
@@ -111,15 +112,19 @@ export function KanbanBoard() {
       .map((id) => tasksById[id])
       .filter((t): t is Task => Boolean(t));
 
+    const inProgress = columnOrder["in-progress"]
+      .map((id) => tasksById[id])
+      .filter((t): t is Task => Boolean(t));
+
     const done = columnOrder.done
       .map((id) => tasksById[id])
       .filter((t): t is Task => Boolean(t));
 
-    return { todo, done };
-  }, [columnOrder.done, columnOrder.todo, tasksById]);
+    return { todo, "in-progress": inProgress, done };
+  }, [columnOrder.todo, columnOrder["in-progress"], columnOrder.done, tasksById]);
 
   return (
-    <div className="mx-auto w-full max-w-5xl p-4 sm:p-6">
+    <div className="mx-auto w-full max-w-7xl p-4 sm:p-6">
       <div className="mb-6 flex items-start justify-between gap-4">
         <div>
           <h1 className="text-2xl font-bold tracking-tight">Kanban</h1>
@@ -136,8 +141,9 @@ export function KanbanBoard() {
         onDragStart={onDragStart}
         onDragEnd={onDragEnd}
       >
-        <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
           <KanbanColumn title="To Do" status="todo" tasks={tasksByStatus.todo} />
+          <KanbanColumn title="In Progress" status="in-progress" tasks={tasksByStatus["in-progress"]} />
           <KanbanColumn title="Done" status="done" tasks={tasksByStatus.done} />
         </div>
 

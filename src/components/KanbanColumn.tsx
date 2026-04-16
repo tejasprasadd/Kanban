@@ -36,9 +36,9 @@ export function KanbanColumn({ title, status, tasks }: Props) {
         >
           {tasks.length === 0 ? (
             <div className="rounded-lg border border-dashed p-6 text-center text-sm text-muted-foreground">
-              {status === "todo"
-                ? "Drop here or create a task."
-                : "Drop completed tasks here."}
+              {status === "todo" && "Drop here or create a task."}
+              {status === "in-progress" && "Drag tasks here to mark in progress."}
+              {status === "done" && "Drop completed tasks here."}
             </div>
           ) : (
             <div className="flex flex-col gap-3">

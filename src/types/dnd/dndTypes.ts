@@ -7,7 +7,7 @@ export function columnId(status: TaskStatus): ColumnId {
 }
 
 export function isColumnId(id: string): id is ColumnId {
-  return id.startsWith("column:") && (id === "column:todo" || id === "column:done");
+  return id === "column:todo" || id === "column:in-progress" || id === "column:done";
 }
 
 export function statusFromColumnId(id: ColumnId): TaskStatus {
