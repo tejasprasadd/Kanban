@@ -31,8 +31,14 @@ export function SortableTaskCard({ task }: Props) {
   };
 
   return (
-    <div ref={setNodeRef} style={style} {...attributes} {...listeners}>
-      <TaskCard task={task} />
-    </div>
+    <div
+    ref={setNodeRef}
+    style={style}
+    className="touch-none"
+    {...attributes}
+    {...listeners}
+  >
+    <TaskCard task={task} />
+  </div>
   );
 }

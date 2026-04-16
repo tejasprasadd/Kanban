@@ -5,15 +5,17 @@ import type { TaskStatus } from "@/types/TaskStatus";
 import { KanbanColumn } from "./KanbanColumn";
 import { CreateTaskDialog } from "./CreateTaskDialog";
 import {
-  DndContext,
-  DragOverlay,
-  PointerSensor,
-  closestCenter,
-  useSensor,
-  useSensors,
-  type DragEndEvent,
-  type DragStartEvent,
-} from "@dnd-kit/core";
+    DndContext,
+    DragOverlay,
+    PointerSensor,
+    TouchSensor,
+    MouseSensor,
+    closestCenter,
+    useSensor,
+    useSensors,
+    type DragEndEvent,
+    type DragStartEvent,
+  } from "@dnd-kit/core";
 
 import { isColumnId, statusFromColumnId } from "@/types/dnd/dndTypes";
 import { TaskCard } from "./TaskCard";
@@ -28,13 +30,27 @@ export function KanbanBoard() {
 
   const [activeTaskId, setActiveTaskId] = useState<string | null>(null);
   const sensors = useSensors(
-    useSensor(PointerSensor, {
+    // Mouse drag (desktop)
+    useSensor(MouseSensor, {
+      activationConstraint: { distance: 8 },
+    }),
+  
+    // Touch drag (mobile)
+    useSensor(TouchSensor, {
       activationConstraint: {
-        distance: 12, // drag starts only after moving 12px
+        delay: 200,     // long-press a bit before drag starts
+        tolerance: 8,   // allow slight finger movement during long-press
       },
+    }),
+  
+    // PointerSensor is optional if you already use Mouse+Touch,
+    // but you can keep it if you want:
+    useSensor(PointerSensor, {
+      activationConstraint: { distance: 8 },
     }),
   );
 
+  //Finding which columnt the task belongs to. 
   function findStatusOfTask(order: typeof columnOrder, taskId: string): TaskStatus | null {
     if (order.todo.includes(taskId)) return "todo";
     if (order.done.includes(taskId)) return "done";
@@ -44,14 +60,14 @@ export function KanbanBoard() {
   function indexInStatus(order: typeof columnOrder, status: TaskStatus, taskId: string) {
     return order[status].indexOf(taskId);
   }
-
+  //Which is the id of the task being dragged. 
   function onDragStart(event: DragStartEvent) {
     setActiveTaskId(String(event.active.id));
   }
-
+  //To modify the status of the task that was dragged based on fetching the latest state of that particular task. 
   function onDragEnd(event: DragEndEvent) {
     setActiveTaskId(null);
-
+    //Which is the id of the task that was dragged. 
     const activeId = String(event.active.id);
     const overId = event.over?.id ? String(event.over.id) : null;
     if (!overId) return;
@@ -63,6 +79,7 @@ export function KanbanBoard() {
     const fromStatus = findStatusOfTask(order, activeId);
     if (!fromStatus) return;
 
+    //Figure out the status of the task in the destination column. 
     let toStatus: TaskStatus;
     let toIndex: number;
 
@@ -80,6 +97,7 @@ export function KanbanBoard() {
     const fromIndex = indexInStatus(order, fromStatus, activeId);
     if (fromIndex < 0) return;
 
+    //If dragging within the same column, just reorder the task. 
     if (fromStatus === toStatus) {
       if (fromIndex !== toIndex) state.reorderTask(fromStatus, fromIndex, toIndex);
     } else {
@@ -87,6 +105,7 @@ export function KanbanBoard() {
     }
   }
 
+  //Get the tasks by index from the store. 
   const tasksByStatus: TasksByStatus = useMemo(() => {
     const todo = columnOrder.todo
       .map((id) => tasksById[id])
