@@ -1,6 +1,7 @@
 import type { Task } from "@/types/Task";
 import type { RefObject } from "react";
 import { Pencil, Trash2 } from "lucide-react";
+import { formatPriorityDate } from "@/utils/helper";
 import { Button } from "./shadcn-components/ui/button";
 import {
   Dialog,
@@ -48,6 +49,8 @@ export function TaskDetailsDialog({
   detailInputRef,
   onDelete,
 }: Props) {
+  const priorityLabel = formatPriorityDate(task.priorityDate);
+
   return (
     <Dialog
       open={open}
@@ -81,6 +84,9 @@ export function TaskDetailsDialog({
 
         <div className="flex flex-wrap gap-2 text-xs text-muted-foreground">
           <span className="rounded bg-muted px-2 py-0.5">status: {task.status}</span>
+          {priorityLabel && (
+            <span className="rounded bg-muted px-2 py-0.5">priority: {priorityLabel}</span>
+          )}
           {typeof task.userId === "number" && (
             <span className="rounded bg-muted px-2 py-0.5">user: {task.userId}</span>
           )}

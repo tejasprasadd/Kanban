@@ -20,6 +20,7 @@ import {
 import type { DraggableAttributes } from "@dnd-kit/core";
 import type { SyntheticListenerMap } from "@dnd-kit/core/dist/hooks/utilities";
 import { TaskDetailsDialog } from "./TaskDetailsDialog";
+import { formatPriorityDate } from "@/utils/helper";
 
 type Props = {
   task: Task;
@@ -70,6 +71,8 @@ export function TaskCard({ task, dragListeners, dragAttributes, setDragHandleRef
         ? "bg-yellow-50 ring-yellow-200/60"
         : "bg-red-50 ring-red-200/60";
 
+  const priorityLabel = formatPriorityDate(task.priorityDate);
+
   return (
     <>
       <Card className={statusColor}>
@@ -82,6 +85,11 @@ export function TaskCard({ task, dragListeners, dragAttributes, setDragHandleRef
               title={task.todo}
             >
               <div className="line-clamp-2 break-words text-sm font-medium">{task.todo}</div>
+              {priorityLabel && (
+                <div className="mt-1 text-xs text-muted-foreground">
+                  Priority: <span className="font-medium text-foreground">{priorityLabel}</span>
+                </div>
+              )}
             </button>
 
             <div className="flex shrink-0 items-center gap-1">

@@ -23,6 +23,7 @@ export function CreateTaskDialog() {
 
   const [open, setOpen] = useState(false);
   const [title, setTitle] = useState("");
+  const [priorityDate, setPriorityDate] = useState<string>("");
 //Checking if the title is empty or not thereby validating for a valid task .
   const canSubmit = useMemo(() => title.trim().length > 0, [title]);
 
@@ -35,9 +36,11 @@ export function CreateTaskDialog() {
       todo: title.trim(),
       status: "todo",
       source: "local",
+      priorityDate: priorityDate.trim().length > 0 ? priorityDate : undefined,
     });
 
     setTitle("");
+    setPriorityDate("");
     setOpen(false);
   }
 
@@ -61,6 +64,16 @@ export function CreateTaskDialog() {
               onChange={(e) => setTitle(e.target.value)}
               placeholder="e.g. Watch Dhurandhar 2"
               autoFocus
+            />
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="task-priority-date">Priority date</Label>
+            <Input
+              id="task-priority-date"
+              type="date"
+              value={priorityDate}
+              onChange={(e) => setPriorityDate(e.target.value)}
             />
           </div>
 

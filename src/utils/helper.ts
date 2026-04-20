@@ -9,5 +9,17 @@ export function mapDummyJsonTodoToTask(dto: DummyJsonTodoDto): Task {
         todo: dto.todo,
         status: dto.completed ? "done" : "todo",
         source: "api",
+        priorityDate: undefined,
     };
+}
+
+export function formatPriorityDate(value?: string): string | null {
+  if (!value) return null;
+  const d = new Date(value);
+  if (Number.isNaN(d.getTime())) return null;
+  return new Intl.DateTimeFormat(undefined, {
+    year: "numeric",
+    month: "short",
+    day: "2-digit",
+  }).format(d);
 }

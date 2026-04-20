@@ -7,4 +7,6 @@ export interface Task {
   source: TaskSource;
   status: TaskStatus;
   userId?: number;
+ 
+  priorityDate?: string;
 }
