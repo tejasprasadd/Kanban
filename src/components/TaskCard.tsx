@@ -81,10 +81,26 @@ export function TaskCard({ task, dragListeners, dragAttributes, setDragHandleRef
             <button
               type="button"
               className="min-w-0 flex-1 cursor-pointer text-left"
-              onClick={() => setDetailOpen(true)}
+              onClick={() => {
+                if (!isEditing) setDetailOpen(true);
+              }}
               title={task.todo}
             >
-              <div className="line-clamp-2 break-words text-sm font-medium">{task.todo}</div>
+              {isEditing && !detailOpen ? (
+                <Input
+                  ref={inputRef}
+                  value={draft}
+                  onChange={(e) => setDraft(e.target.value)}
+                  onBlur={save}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") save();
+                    if (e.key === "Escape") cancel();
+                  }}
+                  className="h-8"
+                />
+              ) : (
+                <div className="line-clamp-2 break-words text-sm font-medium">{task.todo}</div>
+              )}
               {priorityLabel && (
                 <div className="mt-1 text-xs text-muted-foreground">
                   Priority: <span className="font-medium text-foreground">{priorityLabel}</span>
@@ -141,19 +157,7 @@ export function TaskCard({ task, dragListeners, dragAttributes, setDragHandleRef
             </div>
           </div>
 
-          {isEditing && !detailOpen && (
-            <Input
-              ref={inputRef}
-              value={draft}
-              onChange={(e) => setDraft(e.target.value)}
-              onBlur={save}
-              onKeyDown={(e) => {
-                if (e.key === "Enter") save();
-                if (e.key === "Escape") cancel();
-              }}
-              className="mt-2 h-8"
-            />
-          )}
+          {/* Inline edit now happens in-place (no extra input below). */}
         </CardContent>
       </Card>
 
